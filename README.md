@@ -10,12 +10,16 @@ Below is a brief description of each project:
 
 **Key Components:** AND, OR, XOR, MUX, DMUX, NOT.
 
-**Project 2: Boolean Arithmetic**
+# Project 2: Boolean Arithmetic
+
 **Description:** Constructed basic arithmetic operations, including addition and subtraction, culminating in a 16-bit Arithmetic Logic Unit (ALU).
+
 **Key Components:** Half Adder, Full Adder, 16-bit ALU.
 
-**Project 3: Sequential Logic**
+# Project 3: Sequential Logic
+
 **Description:** Designed memory components that store data, including flip-flops, registers, and RAM modules.
+
 **Key Components:** DFF, Register, RAM (8, 64, 512, 4K, 16K).
 
 **Project 4: Machine Language Programming**
