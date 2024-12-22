@@ -5,6 +5,7 @@ starting with simple logic gates and culminating in a full software stack and op
 Below is a brief description of each project:
 
 **Project 1: Boolean Logic**
+
 **Description:** Built basic Boolean logic gates (AND, OR, NOT, etc.) using only a NAND gate. These gates form the foundation of all subsequent hardware.
 **Key Components:** AND, OR, XOR, MUX, DMUX, NOT.
 
