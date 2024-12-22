@@ -4,7 +4,7 @@ Nand to Tetris is a computer science course that teaches how to build a computer
 starting with simple logic gates and culminating in a full software stack and operating system. 
 Below is a brief description of each project:
 
-**Project 1: Boolean Logic**
+# Project 1: Boolean Logic
 
 **Description:** Built basic Boolean logic gates (AND, OR, NOT, etc.) using only a NAND gate. These gates form the foundation of all subsequent hardware.
 
