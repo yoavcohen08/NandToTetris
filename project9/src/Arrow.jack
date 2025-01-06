@@ -1,0 +1,92 @@
+class Arrow
+{
+    field int center;
+    field Column column;
+    constructor Arrow new()
+    {
+        let center = 15;
+        let column = null;
+        return this;
+    }
+    
+    method void drawupArrow(boolean isdraw)
+    {
+        do Screen.setColor(isdraw);
+        do Screen.drawLine(center, 211, center, 219); 
+        do Screen.drawLine(center, 211, center-5, 216);  
+        do Screen.drawLine(center, 211, center+5 ,216);
+        if(~isdraw)
+        {
+            do Screen.setColor(true);
+            do Screen.drawLine(190, 215, 220, 215);
+            do Screen.drawLine(237, 215, 267, 215);
+        }
+        return; 
+    }
+     method void drawdownArrow(boolean isdraw)
+    {
+        do Screen.setColor(isdraw);
+        do Screen.drawLine(center, 18, center, 11); 
+        do Screen.drawLine(center, 18, center-5, 13);  
+        do Screen.drawLine(center, 18, center+5 ,13);
+        return;  
+    }
+    method void drawArrow(boolean isdraw)//check if need draw up or down arrow
+    {
+        var int colnumber;
+        let colnumber = getColumnNum();
+        if(colnumber<13)
+        {
+            do drawdownArrow(isdraw);
+        }
+        else
+        {
+            do drawupArrow(isdraw);
+        }
+        return;
+    }
+    method void SetColnumAndDraw(Column col)
+    {
+        var int temp;
+        if(col = null)
+        {
+            do drawArrow(false);
+            do setCenter(15);
+            return this;
+        }
+        if (column = null)
+        {
+            do setColum(col);
+        }
+        else
+        {  
+            do drawArrow(false);
+            do setColum(col);
+        }
+        let temp = column.getwidth();
+        do setCenter(temp);
+        do drawArrow(true);
+        return this;
+
+    }
+    method void setColum(Column col)
+    {
+      let column = col;
+       return this;
+    }
+    method Column getColumn()
+    {
+        return column;
+    }
+    method int getColumnNum()
+    {
+        var int temp;
+        let temp = column.getColumnNumber();
+        return temp;
+    }
+    method void setCenter(int cen)
+    {
+        let center = cen;
+        return this;
+    }
+}

@@ -1,0 +1,99 @@
+class Piece{
+    field int widthCenter;
+    field int height;
+    field int color;   // 0 for white, 1 for black
+    field boolean isEaten; // true if the piece is eaten, false otherwise
+    field boolean intailpass;
+
+    constructor Piece new(int col){
+        let color = col;
+        let widthCenter = 10;
+        let height = 10;
+        let isEaten = false;
+        let intailpass = false;
+        return this;
+    }
+    method void drawWhitePlayer(boolean draw) {
+      var int x, y, d, centerX, centerY;
+      do Screen.setColor(draw);
+      let centerX = widthCenter;
+      let centerY = height;
+      let x = 0;
+      let y = 3;
+      let d = 1 - 3;
+
+      while (~(x > y)) {
+         // Draw small vertical or horizontal lines to approximate a circle
+         do Screen.drawLine(centerX + x, centerY + y, centerX + x, centerY + y); // Octant 1
+         do Screen.drawLine(centerX - x, centerY + y, centerX - x, centerY + y); // Octant 2
+         do Screen.drawLine(centerX + x, centerY - y, centerX + x, centerY - y); // Octant 3
+         do Screen.drawLine(centerX - x, centerY - y, centerX - x, centerY - y); // Octant 4
+         do Screen.drawLine(centerX + y, centerY + x, centerX + y, centerY + x); // Octant 5
+         do Screen.drawLine(centerX - y, centerY + x, centerX - y, centerY + x); // Octant 6
+         do Screen.drawLine(centerX + y, centerY - x, centerX + y, centerY - x); // Octant 7
+         do Screen.drawLine(centerX - y, centerY - x, centerX - y, centerY - x); // Octant 8
+
+         if (d < 0) {
+            let d = d + (2 * x) + 3;
+         } else {
+            let d = d + (2 * (x - y)) + 5;
+            let y = y - 1;
+         }
+         let x = x + 1;
+      }
+      return;
+   }
+   method void drawBlackPlayer(boolean draw) {
+      var int x, y, d, centerX, centerY;
+      do Screen.setColor(draw);
+      let centerX = widthCenter;
+      let centerY = height;
+      let x = 0;
+      let y = 3;
+      let d = 1 - 3;
+
+      while (~(x > y)) {
+         // Draw horizontal lines to fill the circle row by row
+         do Screen.drawLine(centerX - x, centerY + y, centerX + x, centerY + y); // Top octants
+         do Screen.drawLine(centerX - x, centerY - y, centerX + x, centerY - y); // Bottom octants
+         do Screen.drawLine(centerX - y, centerY + x, centerX + y, centerY + x); // Side octants
+         do Screen.drawLine(centerX - y, centerY - x, centerX + y, centerY - x); // Side octants (bottom)
+
+         if (d < 0) {
+            let d = d + (2 * x) + 3;
+         } else {
+            let d = d + (2 * (x - y)) + 5;
+            let y = y - 1;
+         }
+         let x = x + 1;
+      }
+      return;
+   }
+   method void movePiece(int width, int heigh){
+        if(color = 1){
+            do drawBlackPlayer(false);
+            do setWdithCenter(width);
+            do setHeight(heigh);
+            do drawBlackPlayer(true);
+        }
+        else{
+            do drawWhitePlayer(false);
+            do setWdithCenter(width);
+            do setHeight(heigh);
+            do drawWhitePlayer(true);
+        }
+       return this;
+   }
+   method void setWdithCenter(int width){
+       let widthCenter = width;
+       return this;
+   }
+   method void setHeight(int heigh){
+       let height = heigh;
+       return this;
+   }
+
+   method int getColor(){
+       return color;
+   }
+}

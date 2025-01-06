@@ -1,0 +1,350 @@
+class Column{
+    field int columnNumber;
+    field int checkerCount;
+    field int height;
+    field int linelocation;
+    field int widthCenter;
+    field int jump;
+    field int columnColor; // 0 = white, 1 = black
+    field boolean light; //handling the rectangle
+    field boolean choise_above; //handling the choise above
+    field ListofPiece checkersList;
+
+
+    constructor Column new(int colnum){
+        let checkersList = null;
+        let choise_above = false;
+        let checkerCount = 0;
+        let columnColor = -1; //Empty column
+        let light = false;
+        let columnNumber = colnum;
+        if(colnum = 1){
+            let widthCenter = 404;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 2){
+            let widthCenter = 374;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 3){
+            let widthCenter = 345;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 4){
+            let widthCenter = 315;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 5){
+            let widthCenter = 285;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 6){
+            let widthCenter = 256;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 7){
+            let widthCenter = 205;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 8){
+            let widthCenter = 175;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 9){
+            let widthCenter = 145;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 10){
+            let widthCenter = 115;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 11){
+            let widthCenter = 85;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 12){
+            let widthCenter = 55;
+            let height = 28;
+            let jump = 10;
+            let linelocation = 20;
+        }
+        if(colnum = 13){
+            let widthCenter = 55;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 14){
+            let widthCenter = 85;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 15){
+            let widthCenter = 115;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 16){
+            let widthCenter = 145;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 17){
+            let widthCenter = 175;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 18){
+            let widthCenter = 205;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 19){
+            let widthCenter = 256;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 20){
+            let widthCenter = 285;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 21){
+            let widthCenter = 315;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 22){
+            let widthCenter = 345;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 23){
+            let widthCenter = 374;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        if(colnum = 24){
+            let widthCenter = 404;
+            let height = 203;
+            let jump = -10;
+            let linelocation = 210;
+        }
+        return this;
+    }
+    //Use only after check if jumpable == true
+    method void addChecker(Piece piece, EatZone white, EatZone black)
+    {
+        var int wid, high;
+        var Piece oldpiece;
+        if(columnColor = piece.getColor())//If the color of the checker is the same as the color of the column
+        { 
+            let wid = widthCenter;
+            let high = height + (checkerCount * jump);
+            do piece.movePiece(wid, high);
+            let checkersList = ListofPiece.new(piece,checkersList);
+            let checkerCount = checkerCount + 1;
+        }
+        else//If the color of the checker is different from the color of the column
+        { 
+            if(checkerCount = 1) //If the column has only one checker, so it needs to eat it
+            {
+                let oldpiece = getFirstChecker(); //Gets the one checker thats in the column
+                if(oldpiece.getColor() = 0) //If the old piece is white
+                {
+                    do white.addChecker(oldpiece); //Add the white piece to the white eat zone, and erases from screen
+                }
+                else //If the old piece is black
+                {
+                    do black.addChecker(oldpiece); //Add the black piece to the black eat zone
+                }
+                do checkersList.dispose(); //Dispose the old piece
+            }
+            let wid = widthCenter;
+            let high = height;
+            do piece.movePiece(wid, high);
+            let checkersList = ListofPiece.new(piece, null);
+            let columnColor = piece.getColor(); 
+            do setCount(1);
+        }
+        return this;
+    }
+
+    method void moveChecker(Column colTo, EatZone white, EatZone black){ //Moves the first piece from this column to colTo
+        var Piece piece;
+        let piece = prepareToMoveChecker();
+        do colTo.addChecker(piece, white, black);
+        return this;
+    }
+    method Piece prepareToMoveChecker(){ //returns the first piece in the column and removes it from the column
+        var Piece piece;
+        var ListofPiece lst;
+        let lst = checkersList;
+        let piece = lst.getData();
+        do setList(lst.removeFirst());
+        do setCount(checkerCount - 1);
+        if(checkerCount = 0){
+            do setColor(-1);
+        }
+        return piece;
+    }
+    //When we need to move checkers out of board.
+    //If Column.color = -1, then the column is empty. 
+    method void removeChecker(WinZone white, WinZone black){
+        var Piece piece;
+        var ListofPiece lst;
+        let piece = getFirstChecker();
+        if(piece.getColor() = 0){ //White piece is removed from board to white win zone
+            do white.addChecker(piece);
+        }
+        else{ //Black piece is removed from board to black win zone
+            do black.addChecker(piece);
+        }
+        if(checkerCount = 1){ //was last checker in Column
+            do setCount(0);
+            do setColor(-1);
+            do setList(null);
+        }
+        else
+        { //more than one checker in Column
+            let lst = checkersList;
+            do setList(lst.removeFirst());
+            do setCount(checkerCount - 1);
+        }
+        return this;
+    }
+    method void removeCheckerSpecial(EatZone white, EatZone black)
+    {
+        var Piece lastpiece;
+        var ListofPiece lst;
+        let lst = checkersList;
+        let lastpiece = lst.getData();
+        if(lastpiece.getColor() = 0) //White piece is removed from board to white eat zone
+        {
+            do white.addChecker(lastpiece);
+        }
+        else //Black piece is removed from board to black eat zone
+        {
+            do black.addChecker(lastpiece);
+        }
+        do setCount(0);
+        do setColor(-1);
+        do setList(null);
+        return this;
+    }
+    method void drawIfoption(boolean which)//get a boolean and draw the rectanlge or remove it
+    {
+        if(columnNumber<13)
+        {
+            do Screen.setColor(which);
+          do Screen.drawRectangle(widthCenter-2,14,widthCenter+2,18);
+        }
+       else
+       {
+        do Screen.setColor(which);
+         do Screen.drawRectangle(widthCenter-2,212,widthCenter+2,216);
+         if(~which)
+        {
+            do Screen.setColor(true);
+            do Screen.drawLine(190, 215, 220, 215);//draw again the ling of cube
+            do Screen.drawLine(237, 215, 267, 215);
+        }
+       }
+        return;
+    }
+    method void setlight(boolean is)
+    {
+        let light = is;
+        return this;
+    }
+    method boolean getlight()
+    {
+        return light;
+    }
+
+    method void setList(ListofPiece lst){
+        let checkersList = lst;
+        return this;
+    }
+    method void setCount(int count){
+        let checkerCount = count;
+        return this;
+    }
+    method void setColor(int col){
+        let columnColor = col;
+        return this;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+    method int getColor(){
+        return columnColor;
+    }
+    method int getCheckerCount(){
+        return checkerCount;
+    }
+    method int getColumnNumber(){
+        return columnNumber;
+    }
+    method int getwidth(){
+        return widthCenter;
+    }
+    method int getheight(){
+        return height;
+    }
+    method int getJump(){
+        return jump;
+    }
+    method ListofPiece getCheckersList()
+    {
+        return checkersList;
+    }
+    method Piece getFirstChecker(){
+        return checkersList.getData();
+    }
+    method int listlength(){
+        return checkersList.length();
+    }
+    method void setChoise_above(boolean is) //set option that choise zone can be jumpable
+    {
+        let choise_above = is;
+        return this;
+    }
+    method boolean getChoise_above() //set option that choise zone can be jumpable
+    {
+        return choise_above;
+    }
+}

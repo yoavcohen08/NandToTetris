@@ -1,0 +1,31 @@
+class Dice {
+    field int index; //Dice number
+    constructor Dice new(int ind) 
+    {
+        let index = ind;
+        return this;
+    }
+    
+    method int roll() 
+    {
+        var int flag;
+        let flag = Random.randRange(); // Generate a random number 1-6
+        if(index = 1)
+        {
+             do Output.moveCursor(21,24);
+             do Output.printInt(flag);
+             return flag;
+        }
+        else {
+            do Output.moveCursor(21,30);
+            do Output.printInt(flag);
+            return flag;
+        }
+    }
+   
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+}

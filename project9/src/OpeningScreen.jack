@@ -1,0 +1,111 @@
+class OpeningScreen
+{
+    function void LetsBegin()
+    {
+        var int seed1,seed2,num1,num2;
+        var char key;
+        do Output.moveCursor(17,17);
+        do Output.printString("Backgammon in Jack language");
+        do Output.moveCursor(18,16);
+        do Output.printString("By Yoav Cohen and Liram Kreiner");
+        do Output.moveCursor(3,18);
+        do Output.printString("Before starting the game");
+        do Output.moveCursor(5,18);
+       do Output.printString("Please enter two 5 digit numbers");
+          do Output.moveCursor(6,18);
+         let seed1 = Keyboard.readInt("First:");
+         do Output.moveCursor(7,18);
+         let seed2= Keyboard.readInt("Second:");
+          do Random.seed(seed1,seed2);
+          do Screen.clearScreen();
+           do Output.moveCursor(3,18);
+         do Output.printString("Let us now determine who will begin.");
+        let num1 = 0;
+        let num2 = 0;
+        do OpeningScreen.drawCube();
+          while(num1 = num2)
+          {
+             do Output.moveCursor(4,18);
+            do Output.printString("Player1 roll - press (d) for rolling");
+            while(~(key=100))
+            {
+                let key = Keyboard.keyPressed();
+            }
+            let key = 0;
+            do Sys.wait(280);
+            let num1 = Random.randRange();
+            do Output.moveCursor(21,24);
+            do Output.printInt(num1);
+             do Output.moveCursor(4,18);
+            do Output.printString("Player2 roll - press (d) for rolling");
+             while(~(key=100))
+            {
+                let key = Keyboard.keyPressed();
+            }
+            let num2 = Random.randRange();
+            do Output.moveCursor(21,30);
+            do Output.printInt(num2);
+            let key = 0;
+            do Sys.wait(280);
+            if(num1=num2)
+            {
+                 do Output.moveCursor(4,18);
+                  do Output.printString("                                    ");//find an better way
+                 do Output.moveCursor(4,18);
+                 do Output.printString("Roll again!");
+                  do Output.moveCursor(21,24);
+               do Output.printString(" ");
+                 do Output.moveCursor(21,30);
+                do Output.printString(" ");
+                 do Sys.wait(1250);
+            }
+          }
+         if(num1>num2)
+          {
+             do Output.moveCursor(4,18);
+                  do Output.printString("                                    ");//find an better way
+             do Output.moveCursor(4,18);
+                 do Output.printString("Player1 start!");
+          }
+          else
+          {
+             do Output.moveCursor(4,18);
+                  do Output.printString("                                    ");//find an better way
+             do Output.moveCursor(4,18);
+                 do Output.printString("Player2 start!");
+          }
+           do Sys.wait(2000);
+           do Screen.clearScreen();
+        return;
+    }
+    function void drawCube()
+    {
+        //cube
+        // Cube 1 (first cube) - moved down by 5 units
+        do Screen.drawLine(180, 225, 210, 225);  // Bottom line of the front face (right side)
+        do Screen.drawLine(210, 225, 210, 245);  // Right side of the front face
+        do Screen.drawLine(210, 245, 180, 245);  // Top line of the front face
+        do Screen.drawLine(180, 245, 180, 225);  // Left side of the front face (removed)
+
+        // Connect to the 3D perspective
+        do Screen.drawLine(180, 225, 190, 215);  // Connect to the 3D perspective (back left)
+        do Screen.drawLine(210, 225, 220, 215);  // Connect to the 3D perspective (back right)
+        do Screen.drawLine(210, 245, 220, 235);  // Connect to the 3D perspective (back right top)
+        do Screen.drawLine(220, 235, 220, 215);  // Connect to 3D right top to right wig
+        do Screen.drawLine(190, 215, 220, 215);  // Connect to 3D left to right wig
+
+        do Screen.drawLine(227, 225, 257, 225);  // Bottom line of the front face (right side)
+        do Screen.drawLine(257, 225, 257, 245);  // Right side of the front face
+        do Screen.drawLine(257, 245, 227, 245);  // Top line of the front face
+        do Screen.drawLine(227, 245, 227, 225);  // Left side of the front face (removed)
+
+        // Connect to the 3D perspective
+        do Screen.drawLine(227, 225, 237, 215);  // Connect to the 3D perspective (back left)
+        do Screen.drawLine(257, 225, 267, 215);  // Connect to the 3D perspective (back right)
+        do Screen.drawLine(257, 245, 267, 235);  // Connect to the 3D perspective (back right top)
+        do Screen.drawLine(267, 235, 267, 215);  // Connect to 3D right top to right wig
+        do Screen.drawLine(237, 215, 267, 215);  // Connect to 3D left to right wig
+        return;
+    }
+}
+    

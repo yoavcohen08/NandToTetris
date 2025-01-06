@@ -1,0 +1,1055 @@
+class Backgammon {
+    
+    // Constants
+    static int turn; // 0 = white, 1 = black
+    field Board board;
+    field Player WhitePlayer;
+    field Player BlackPlayer;
+    field Arrow arrow;
+    field ChoiseZone choisezone;
+    field Dice dice1;
+    field Dice dice2;
+    field int dice1num;
+    field int dice2num;
+    field boolean Isdouble;
+    field int counterdouble;
+    static int ContWinWhite;
+    static int ContWinBlack;
+
+    constructor Backgammon new() {
+        let turn = 0;
+        let Isdouble = false;
+        let counterdouble = 0;
+        let board = Board.new();
+        let dice1 = Dice.new(1);
+        let dice2 = Dice.new(2);
+        let dice1num =0;
+        let dice2num =0;
+        let arrow = Arrow.new();
+        if(turn = 0)
+        {
+             do Output.moveCursor(0,54);
+        do Output.printString("Turn:");
+        do Output.moveCursor(1,54);
+        do Output.printString("White");
+        }
+        else
+        {
+              do Output.moveCursor(0,54);
+        do Output.printString("Turn:");
+        do Output.moveCursor(1,54);
+        do Output.printString("Black");
+        }
+       
+        let choisezone = ChoiseZone.new();
+     
+        return this;
+
+       
+    }
+    method void reset()
+    {
+       do Screen.clearScreen();
+        let Isdouble = false;
+        let counterdouble = 0;
+        let board = Board.new();
+        let dice1 = Dice.new(1);
+        let dice2 = Dice.new(2);
+        let dice1num =0;
+        let dice2num =0;
+        let arrow = Arrow.new();
+        if(turn = 0)
+        {
+             do Output.moveCursor(0,54);
+        do Output.printString("Turn:");
+        do Output.moveCursor(1,54);
+        do Output.printString("White");
+        }
+        else
+        {
+              do Output.moveCursor(0,54);
+        do Output.printString("Turn:");
+        do Output.moveCursor(1,54);
+        do Output.printString("Black");
+        }
+       
+        let choisezone = ChoiseZone.new();
+        if((ContWinWhite>0)|(ContWinBlack>0))
+        {
+              do Output.moveCursor(4,54);
+            do Output.printString("Score:");
+              do Output.moveCursor(5,54);
+            do Output.printString("Black:");
+              do Output.printInt(ContWinBlack);
+               do Output.moveCursor(6,54);
+            do Output.printString("White:");
+              do Output.printInt(ContWinWhite);
+
+        }
+        return this;
+    }
+
+    
+    // Handle player turn logic (dice roll, move, etc.)
+    method char play() 
+    {
+        var Column cl,chosen_cal;
+        var char es,check_key,key;
+        var int colnumber,choise,tempcolnum;
+        var boolean fiestiterate,esc,moveleft;
+        do Output.moveCursor(0,24);
+        do Output.printString("Please roll");
+        while(~(key=100))
+        {
+            let key = Keyboard.keyPressed();
+        }
+        let key = 0;
+         do Output.moveCursor(0,24);
+        do Output.printString("                ");
+        do Sys.wait(1500);
+        let dice1num=dice1.roll();
+        let dice2num=dice2.roll();
+        if(dice1num = dice2num)
+        {
+            let dice2num = 0;
+            let counterdouble = 4;
+            let Isdouble = true; 
+        }
+         do ArrangeTurnForPlay();
+        while(~(board.checkIfBlackWin())&~(board.checkIfWhiteWin()))
+        {
+            let moveleft = board.HasMoveLeft();
+            let esc = false;
+            let fiestiterate = true;//check first time loop
+            if(moveleft)
+            {
+                if(board.isEeaten(turn))
+                {
+                     do arrow.SetColnumAndDraw(null);
+                     do board.turnOffAll(26);
+                     let esc = true;
+                    if(~(EeatenMove()))
+                    {
+                      do nextturnProcess();
+                    }
+                    else
+                    {
+                        do ArrangeTurnForPlay();
+                    }
+                     
+                }
+                else
+                {
+                     do arrowMove();
+                    do Sys.wait(500);
+                } 
+                //end when player press enter
+            }
+            else
+            {
+             do nextturnProcess();
+             let esc = true;
+                
+            }
+        if(~(esc))
+        {
+            let es = Keyboard.keyPressed();     
+            let colnumber = arrow.getColumnNum();
+            let choise = board.OptionsToMove(colnumber,dice1num,dice2num);//get where I can move
+        
+            do board.turnOffAll(colnumber);//turn off all colunm I can move, and remove the rectangle
+            
+            do choisezone.setColor(turn);//set the color of the first 
+            do givealloptionenter(choise,colnumber,dice1num,dice2num);
+            let key = choisemove();//draw the choise where I can jump
+            //end when player press enter or escape
+            let chosen_cal = choisezone.getColumn(); //get the colunm of the player press enter
+            do choisezone.drawChoise(false);
+            do choisezone.setColunm(null);
+            let fiestiterate = false;
+            if(key = 140)//press esc
+            {
+                do ArrangeTurnForPlay();
+                do Sys.wait(500);
+            }
+            if(key = 128)//press enter
+            {
+                if(~(chosen_cal = null))
+                    {
+                    let tempcolnum = chosen_cal.getColumnNumber();//get the number of the colunm I chose
+                    do board.move(colnumber,tempcolnum);//move it
+                    if(Isdouble & (counterdouble>1))
+                    {
+                        let counterdouble = counterdouble -1 ;
+                    }
+                    else
+                    {
+                        do UsingCube(colnumber,tempcolnum); //use the cube
+                    }
+                    do ArrangeTurnForPlay();
+                    do Sys.wait(500);
+                    let key = 0;
+                }
+            }
+            if(key = 119)
+            {
+                    if(Isdouble & (counterdouble>1))
+                {
+                    let counterdouble = counterdouble -1 ;
+                }
+                else
+                {
+
+                        do UsingCubeFowWin(colnumber); //use the cube
+                }
+                do board.winmove(colnumber);
+                let esc = true;
+                do ArrangeTurnForPlay();
+                do Sys.wait(500);
+            }
+                
+        }
+        }
+        do Output.moveCursor(0,24);
+        do Output.printString("                          ");
+        if(board.checkIfBlackWin())
+        {
+            do Output.moveCursor(0,2);
+            do Output.printString("Congrats, Black Player Won The Game!");
+            let ContWinBlack = ContWinBlack+1;
+             let turn = 1;
+            do Sys.wait(10000);
+        }
+        else
+        {
+              do Output.moveCursor(0,2);
+            do Output.printString("Congrats, White Player Won The Game!");
+            let ContWinWhite = ContWinWhite+1;
+            let turn = 0;
+            do Sys.wait(10000);
+        }
+          do Output.moveCursor(0,2);
+           do Output.printString("                                    ");
+        do Output.moveCursor(0,18);
+        do Output.printString("Press r for restart:");
+        let key = Keyboard.readChar();
+         do Sys.wait(2000);
+        return key;
+    }
+    
+    // Check if a player has won
+    function boolean checkWinCondition() {
+        
+        return false;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+    method void arrowMove()
+    {
+        var Column cl,tempcal;
+        var int colnumber,tempcolnum,aa;
+        var boolean foundcol,foundcoldown;
+        var char key;
+        let key = 0;
+        let colnumber = arrow.getColumnNum();
+    while(~(key = 128)) //while no enter has been pres
+       {
+         let key = Keyboard.keyPressed();
+        let colnumber = arrow.getColumnNum();
+        if (key = 132)  //right arrow
+            {   
+                if(colnumber>1)
+                {
+                    if(colnumber<24) //if I am not on the edge of the board
+                    {
+                         let tempcal = arrow.getColumn();
+                        let foundcol = false;   
+                        if(colnumber<13) //upside board
+                        {
+                            let tempcolnum = colnumber - 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getlight() = false & tempcolnum>0 & ~(foundcol)) // look for the closest rectangle I can get
+                            {
+                                if(cl.getlight() = true)
+                                {
+                                    let foundcol = true;
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum - 1;
+                                    let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getlight()= true) //if I found one else nothing happen
+                            {
+                                do arrow.SetColnumAndDraw(null); // remove the arrow
+                                do tempcal.drawIfoption(true); //the current location of the arrow , draw rectangle
+                                do cl.drawIfoption(false);// the found Colunm , remove the rectangle
+                                do arrow.SetColnumAndDraw(cl); // draw the arrow
+                            }
+                        }
+                        else//downside of the board 
+                        //same as above, instead of plus on every search than +1 
+                        {
+                            let tempcolnum = colnumber + 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getlight() = false & tempcolnum<25 & ~(foundcol))
+                            {
+                                if(cl.getlight() = true)
+                                {
+                                    let foundcol = true;
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum + 1;
+                                let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getlight()= true)
+                            {
+                                do arrow.SetColnumAndDraw(null);
+                                do tempcal.drawIfoption(true);
+                                do cl.drawIfoption(false);
+                                do arrow.SetColnumAndDraw(cl);
+                            }   
+                        }
+            }
+                }  
+                do Sys.wait(200);
+                let key =  0;
+            }
+            if (key = 130) //left arrow
+            {//there is no limit sincse I can allways go left
+            //same as above but opposite since it is diffrent arrow
+                let tempcal = arrow.getColumn();
+                let foundcol = false;   
+                if(colnumber<13)
+                {
+                    let tempcolnum = colnumber + 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getlight() = false & tempcolnum<25 & ~(foundcol)) //serch all over the board
+                     {
+                        if(cl.getlight() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum + 1;
+                         let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getlight()= true)
+                    {
+                        do arrow.SetColnumAndDraw(null);
+                        do tempcal.drawIfoption(true);
+                        do cl.drawIfoption(false);
+                        do arrow.SetColnumAndDraw(cl);
+                    }   
+                }
+                else
+                {//same as above
+                    let tempcolnum = colnumber - 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getlight() = false & tempcolnum>0 & ~(foundcol))
+                     {
+                        if(cl.getlight() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum - 1;
+                           let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getlight()= true)
+                    {
+                        do arrow.SetColnumAndDraw(null);
+                        do tempcal.drawIfoption(true);
+                        do cl.drawIfoption(false);
+                        do arrow.SetColnumAndDraw(cl);
+                    }   
+                }
+                do Sys.wait(200);
+                let key = 0;
+            }
+    }
+           return;
+    }
+    method int returnrealcol(int col,int num)//get a number colunm and number and return which colunm is rolling depend on the turn
+    {
+        var int temp;
+        if(turn=1)
+        {
+            let temp = col-num;
+            return temp;
+        }
+        else
+        {
+            let temp = col+num;
+            return temp;
+        }
+    }
+    method int nexturn()//next turn and print it
+    {
+        if(turn = 1 )
+        {
+              do board.turnOffAll(26);//no need to turn something on
+             do Output.moveCursor(0,54);
+            do Output.printString("Turn:");
+            do Output.moveCursor(1,54);
+            do Output.printString("White");
+            let turn = 0;
+            return this; 
+        }
+        else
+        {
+              do board.turnOffAll(26);//no need to turn something on
+             do Output.moveCursor(0,54);
+            do Output.printString("Turn:");
+            do Output.moveCursor(1,54);
+            do Output.printString("Black");
+            let turn = 1;
+            return this;
+           
+        }
+    }
+    method void EeatenMove()
+    {
+        var int option,tempcolnum;
+        var Column col,chosen_cal;
+        do board.turnoffAllChoise();
+        do choisezone.setColor(turn);
+        if(turn = 1 )
+        {
+            let option = board.BlackEaten(dice1num,dice2num);
+            do Sys.wait(500);
+            if(option = 0) //if player can go out
+            {
+                return false;
+            }
+           
+            if(option = 1)
+            {
+                    do board.turnOnChoise(25 - dice1num);//turn on optiom to jump
+                let col = board.getColumn(25 - dice1num);
+                do choisezone.SetColnumAndDraw(col);//draw the first option
+                do board.turnOn(25 - dice1num);//turn on rectangle
+            }
+            if(option = 2)
+            {
+                    do board.turnOnChoise(25 - dice2num);//turn on optiom to jump
+                let col = board.getColumn(25 - dice2num);
+                do choisezone.SetColnumAndDraw(col);//draw the first option
+                 do board.turnOn(25 - dice2num);//turn on rectangle
+            }
+            if(option = 3)
+            {
+                    do board.turnOnChoise(25 - dice1num);//turn on optiom to jump
+                let col = board.getColumn(25 - dice1num);
+                do choisezone.SetColnumAndDraw(col);//draw the first option
+                do board.turnOnChoise(25 - dice2num);
+                 do board.turnOn(25 - dice1num);//turn on rectangle
+                  do board.turnOn(25 - dice2num);//turn on rectangle
+            }
+            
+        }
+        else
+        {
+             let option = board.WhiteEaten(dice1num, dice2num);
+            if(option = 0) //if player can go out
+            {
+                return false;
+            }
+            if(option = 1)
+                {
+                     do board.turnOnChoise(dice1num);//turn on optiom to jump
+                    let col = board.getColumn(dice1num);
+                    do choisezone.SetColnumAndDraw(col);//draw the first option
+                     do board.turnOn(dice1num);//turn on rectangle
+                }
+                if(option = 2)
+                {
+                      do board.turnOnChoise(dice2num);//turn on optiom to jump
+                    let col = board.getColumn(dice2num);
+                    do choisezone.SetColnumAndDraw(col);//draw the first option
+                    do board.turnOn(dice2num);//
+                }
+                if(option = 3)
+                {
+                     do board.turnOnChoise(dice1num);//turn on optiom to jump
+                    let col = board.getColumn(dice1num);
+                    do choisezone.SetColnumAndDraw(col);//draw the first option
+                    do board.turnOnChoise(dice2num);
+                    do board.turnOn(dice1num);//
+                    do board.turnOn(dice2num);//
+                }
+        }
+       do MoveOptionOnlyIfEaten();//end only when enter
+        let tempcolnum = choisezone.getColumnNum();//get the number of the colunm I chose
+       do board.removeEatenToBoard(turn,tempcolnum);
+        do choisezone.drawChoise(false);
+        do choisezone.setColunm(null);
+       do Sys.wait(600);
+        if(Isdouble & (counterdouble>1))
+        {
+            let counterdouble = counterdouble -1 ;
+        }
+        else
+        {
+            if(turn = 1)
+            {
+                do UsingCube(25,tempcolnum); //use the cube
+            }
+            else 
+            {
+                 do UsingCube(0,tempcolnum); //use the cube
+            }
+        }
+        
+        return true;
+    }
+    method void MoveOptionOnlyIfEaten()
+    {
+         var Column cl,tempcal;
+        var int colnumber,tempcolnum,aa;
+        var boolean foundcol,foundcoldown;
+        var char key;
+        let key = Keyboard.keyPressed();
+        let colnumber = choisezone.getColumnNum();
+    while(~(key = 128))
+    {
+         let key = Keyboard.keyPressed();
+        let colnumber = choisezone.getColumnNum();
+       
+        if (key = 132) 
+            {   
+                if(colnumber>1)
+                {
+                    if(colnumber<24)
+                    {
+                         let tempcal = choisezone.getColumn();
+                        let foundcol = false;   
+                        if(colnumber<13)
+                        {
+                            let tempcolnum = colnumber - 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getChoise_above() = false & tempcolnum>0 & ~(foundcol))
+                            {
+                                if(cl.getChoise_above() = true)
+                                {
+                                    let foundcol = true;
+                                    
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum - 1;
+                                    let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getChoise_above()= true)
+                            {
+                               
+                                do choisezone.removeChoise();
+                                do choisezone.SetColnumAndDraw(cl);
+                            }
+                        }
+                        else
+                        {
+                            let tempcolnum = colnumber + 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getChoise_above() = false & tempcolnum<25 & ~(foundcol))
+                            {
+                                if(cl.getChoise_above() = true)
+                                {
+                                    let foundcol = true;
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum + 1;
+                                let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getChoise_above()= true)
+                            {
+                                do choisezone.removeChoise();
+                                do choisezone.SetColnumAndDraw(cl);
+                            }   
+                        }
+            }
+                }  
+                do Sys.wait(200);
+                let key =  0;
+            }
+            if (key = 130) 
+            {
+                let tempcal = choisezone.getColumn();
+                let foundcol = false;   
+                if(colnumber<13)
+                {
+                    let tempcolnum = colnumber + 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getChoise_above() = false & tempcolnum<25 & ~(foundcol))
+                     {
+                        if(cl.getChoise_above() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum + 1;
+                         let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getChoise_above()= true)
+                    {
+                        do choisezone.removeChoise();
+                        do choisezone.SetColnumAndDraw(cl);
+                    }   
+                }
+                else
+                {
+                    let tempcolnum = colnumber - 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getChoise_above() = false & tempcolnum>0 & ~(foundcol))
+                     {
+                        if(cl.getChoise_above() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum - 1;
+                           let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getChoise_above()= true)
+                    {
+                        do choisezone.removeChoise();
+                        do choisezone.SetColnumAndDraw(cl);
+                    }   
+                }
+                do Sys.wait(200);
+                let key = 0;
+            }
+        }
+           return;
+    }
+    method void nextturnProcess()//handling all the process of next turn
+    {
+        var char key;
+        var Column cl;
+         do nexturn();
+        let Isdouble = false;
+        do arrow.SetColnumAndDraw(null);
+        //let esc = true;
+        do Output.moveCursor(0,24);
+        do Output.printString("Please roll");
+            while(~(key=100))
+            {
+                let key = Keyboard.keyPressed();
+            }
+                let key = 0;
+                do Output.moveCursor(0,24);
+                do Output.printString("                ");
+                do Sys.wait(1800);
+                let dice1num=dice1.roll();
+                let dice2num=dice2.roll();
+                if(dice1num = dice2num)
+            {
+                let dice2num = 0;
+                let counterdouble = 4;
+                let Isdouble = true; 
+            }
+            do ArrangeTurnForPlay();
+            return this;            
+    }
+    method void givealloptionenter(int choise,int colnumber,int dice1num,int dice2num)//use function of the board, and handle it
+    {
+        var int tempcolnum,test;
+        var Column col ;
+        do board.turnoffAllChoise();//set at the enter all choise where I can jump of
+        if(choise = 6)
+        {
+            let tempcolnum = returnrealcol(colnumber,dice2num);//get the number depend on the color
+            do board.turnOn(tempcolnum);//turn on rectangle
+            do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+            let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+            let tempcolnum = returnrealcol(colnumber,dice2num+dice1num);
+            do board.turnOn(tempcolnum);
+             do board.turnOnChoise(tempcolnum);
+        }
+        if(choise = 1)
+        {
+            let tempcolnum = returnrealcol(colnumber,dice1num);//get the number depend on the color
+            do board.turnOn(tempcolnum);
+             do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+             let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+            let tempcolnum = returnrealcol(colnumber,dice2num);
+            do board.turnOn(tempcolnum);
+            do board.turnOnChoise(tempcolnum);
+            let tempcolnum = returnrealcol(colnumber,dice2num+dice1num);
+            do board.turnOn(tempcolnum);
+            do board.turnOnChoise(tempcolnum);
+        }
+        if(choise = 2)
+        {
+            let tempcolnum = returnrealcol(colnumber,dice1num);
+            do board.turnOn(tempcolnum);
+             do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+             let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+            let tempcolnum = returnrealcol(colnumber,dice2num);
+            do board.turnOn(tempcolnum);
+             do board.turnOnChoise(tempcolnum);
+        }
+        if(choise = 3)
+        {
+            let tempcolnum = returnrealcol(colnumber,dice1num);//get the number depend on the color
+            do board.turnOn(tempcolnum);
+            do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+            let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+        }
+        if(choise = 4)
+        {
+             let tempcolnum = returnrealcol(colnumber,dice2num);//get the number depend on the color
+            do board.turnOn(tempcolnum);//turn on rectangle
+            do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+            let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+        }
+        if(choise = 5) //same as one but instead of j ,i
+        {
+             let tempcolnum = returnrealcol(colnumber,dice1num);//get the number depend on the color
+            do board.turnOn(tempcolnum);//turn on rectangle
+            do board.turnOnChoise(tempcolnum);//turn on optiom to jump
+            let col = board.getColumn(tempcolnum);
+            do choisezone.SetColnumAndDraw(col);//draw the first option
+            let tempcolnum = returnrealcol(colnumber,dice2num+dice1num);
+            do board.turnOn(tempcolnum);
+             do board.turnOnChoise(tempcolnum);
+        }
+        return;
+        
+    }
+    method void UsingCube(int colnumfrom,int colnumto)//get coll from and collunm 2 and using the cube
+    {
+        var int temp;
+        if(turn = 1)
+        {
+            let temp = colnumfrom - colnumto;
+           
+            if(temp = dice1num)
+            {
+                let dice1num = 0;
+            }
+            else
+            {    if(temp = dice2num)
+                {
+                    let dice2num = 0;
+                }
+                else
+                {
+                    let dice1num = 0;
+                     let dice2num = 0;
+                }
+                
+            }
+        }
+        else
+        {
+            let temp = colnumto- colnumfrom;
+            if(temp = dice1num)
+            {
+                let dice1num = 0;
+            }
+            else
+            {    if(temp = dice2num)
+                {
+                    let dice2num = 0;
+                }
+                else
+                {
+                    let dice1num = 0;
+                     let dice2num = 0;
+                }
+                
+            }
+        }
+        return this;
+    }
+    method char choisemove() //same function as arrow take care of the movment, but limit it in diffrent condition
+    //instead of where colunm I can move to which colunm I can jump
+    //this use only after the player press enter
+    {
+        var Column cl,tempcal;
+        var int colnumber,tempcolnum,firstgoout,secondgoout;
+        var boolean foundcol,TakeOut;
+        var char key;
+        var Array arr;
+        let key = Keyboard.keyPressed();
+        let TakeOut = true;
+        let colnumber = choisezone.getColumnNum();
+    while(~(key = 128) & ~(key = 140) & (TakeOut))
+    {
+         let key = Keyboard.keyPressed();
+        let colnumber = choisezone.getColumnNum();
+       
+        if (key = 132) 
+            {   
+                if(colnumber>1)
+                {
+                    if(colnumber<24)
+                    {
+                         let tempcal = choisezone.getColumn();
+                        let foundcol = false;   
+                        if(colnumber<13)
+                        {
+                            let tempcolnum = colnumber - 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getChoise_above() = false & tempcolnum>0 & ~(foundcol))
+                            {
+                                if(cl.getChoise_above() = true)
+                                {
+                                    let foundcol = true;
+                                    
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum - 1;
+                                    let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getChoise_above()= true)
+                            {
+                               
+                                do choisezone.removeChoise();
+                                do choisezone.SetColnumAndDraw(cl);
+                            }
+                        }
+                        else
+                        {
+                            let tempcolnum = colnumber + 1;
+                            let cl = board.getColumn(tempcolnum);
+                            while(cl.getChoise_above() = false & tempcolnum<25 & ~(foundcol))
+                            {
+                                if(cl.getChoise_above() = true)
+                                {
+                                    let foundcol = true;
+                                }
+                                else
+                                {
+                                    let tempcolnum = tempcolnum + 1;
+                                let cl = board.getColumn(tempcolnum);
+                                }
+                            }
+                            if(cl.getChoise_above()= true)
+                            {
+                                do choisezone.removeChoise();
+                                do choisezone.SetColnumAndDraw(cl);
+                            }   
+                        }
+            }
+                }  
+                do Sys.wait(200);
+                let key =  0;
+            }
+            if (key = 130) 
+            {
+                let tempcal = choisezone.getColumn();
+                let foundcol = false;   
+                if(colnumber<13)
+                {
+                    let tempcolnum = colnumber + 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getChoise_above() = false & tempcolnum<25 & ~(foundcol))
+                     {
+                        if(cl.getChoise_above() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum + 1;
+                         let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getChoise_above()= true)
+                    {
+                        do choisezone.removeChoise();
+                        do choisezone.SetColnumAndDraw(cl);
+                    }   
+                }
+                else
+                {
+                    let tempcolnum = colnumber - 1;
+                    let cl = board.getColumn(tempcolnum);
+                     while(cl.getChoise_above() = false & tempcolnum>0 & ~(foundcol))
+                     {
+                        if(cl.getChoise_above() = true)
+                         {
+                             let foundcol = true;
+                         }
+                         else
+                         {
+                            let tempcolnum = tempcolnum - 1;
+                           let cl = board.getColumn(tempcolnum);
+                         }
+                     }
+                    if(cl.getChoise_above()= true)
+                    {
+                        do choisezone.removeChoise();
+                        do choisezone.SetColnumAndDraw(cl);
+                        
+                    }   
+                }
+                do Sys.wait(200);
+                let key = 0;
+            }
+        if(key = 119)
+        {
+            if(board.CheckIfCanRemove(turn))
+            {
+
+                let tempcolnum = arrow.getColumnNum();
+                let firstgoout = board.WhichCanRemove(turn,dice1num);
+                let secondgoout =  board.WhichCanRemove(turn,dice2num);
+                if((firstgoout = tempcolnum) | (secondgoout = tempcolnum))
+                {
+                   let TakeOut = false;
+                 
+                }
+                do Sys.wait(400);
+            }
+        }
+    }
+    return key;
+    
+}
+method void UsingCubeFowWin(int tempcolnum)
+{
+    var int temp;
+    if (turn = 0)
+    {
+        let temp = (tempcolnum - 25)*(-1);
+        if(temp = dice1num)
+        {
+            let dice1num = 0;
+        }
+        else 
+        {
+            if(temp = dice2num)
+            {
+                let dice2num = 0;
+            }
+            else
+            {
+                if(temp>dice1num)
+                {
+                    let dice2num = 0;
+                }
+                else 
+                {
+                    let dice1num = 0;
+                }
+            }
+           
+        }
+    }
+    else
+    {
+       if(tempcolnum = dice1num)
+        {
+            let dice1num = 0;
+        }
+        else 
+        {
+            if(tempcolnum = dice2num)
+            {
+                let dice2num = 0;
+            }
+            else
+            {
+                if(tempcolnum>dice1num)
+                {
+                    let dice2num = 0;
+                }
+                else 
+                {
+                    let dice1num = 0;
+                }
+            }
+           
+        }
+    }
+    return this;
+}
+method void ArrangeTurnForPlay ()
+{
+    var Column tempColunm,firsrColunm;
+    var int firstgoout,secondgoout;
+    var boolean IsMoveOut;//check if there is alreday an arrow
+    do board.turnOffAll(26);
+    do arrow.SetColnumAndDraw(null);
+    let firsrColunm = board.getAllOptionFirst(turn,dice1num,dice2num);
+    let IsMoveOut = true;
+    if(~(firsrColunm = null))
+    {
+         let IsMoveOut = false;
+            do firsrColunm.drawIfoption(false);
+        do arrow.SetColnumAndDraw(firsrColunm);
+      
+    }
+    if(board.CheckIfCanRemove(turn))
+    {
+        let firstgoout = board.WhichCanRemove(turn,dice1num);
+        let secondgoout =  board.WhichCanRemove(turn,dice2num);
+        if(firstgoout>0)
+        {
+            let tempColunm = board.getColumn(firstgoout);
+            do tempColunm.setlight(true);//set the rectangle on
+            if(IsMoveOut)
+            {
+                 do tempColunm.drawIfoption(false);
+                 do arrow.SetColnumAndDraw(tempColunm);
+                let IsMoveOut = false;
+            }
+            else
+            {
+                if(~(firsrColunm.getColumnNumber()=firstgoout))
+                {
+                     do tempColunm.drawIfoption(true);//draw it
+                }
+               
+            }
+          
+        }
+        if(secondgoout >0)
+        {
+            let tempColunm = board.getColumn(secondgoout);
+            do tempColunm.setlight(true);//set the rectangle on
+           if(IsMoveOut)
+            {
+                 do tempColunm.drawIfoption(false);
+                 do arrow.SetColnumAndDraw(tempColunm);
+                let IsMoveOut = false;
+            }
+            else
+            {
+                if(~(firstgoout = secondgoout) & ~(firsrColunm.getColumnNumber()=secondgoout))
+                {
+                    do tempColunm.drawIfoption(true);//draw it
+                }
+                
+            }
+        }
+    }
+    return this;
+}
+}

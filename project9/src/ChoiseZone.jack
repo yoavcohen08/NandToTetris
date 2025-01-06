@@ -1,0 +1,152 @@
+class ChoiseZone
+{
+    field Column colunm;
+    field int color;
+    field int centerX;
+    field int centerY;
+    
+    constructor ChoiseZone new()
+    {
+        
+        let centerX = 15;
+        let colunm = null;
+        let color = 1;
+        let centerY = 10;
+        return this;
+    }
+    method void drawWhitePlayer(boolean draw) {
+      var int x, y, d;
+      do Screen.setColor(draw);
+      let x = 0;
+      let y = 3;
+      let d = 1 - 3;
+      while (~(x > y)) {
+         // Draw small vertical or horizontal lines to approximate a circle
+         do Screen.drawLine(centerX + x, centerY + y, centerX + x, centerY + y); // Octant 1
+         do Screen.drawLine(centerX - x, centerY + y, centerX - x, centerY + y); // Octant 2
+         do Screen.drawLine(centerX + x, centerY - y, centerX + x, centerY - y); // Octant 3
+         do Screen.drawLine(centerX - x, centerY - y, centerX - x, centerY - y); // Octant 4
+         do Screen.drawLine(centerX + y, centerY + x, centerX + y, centerY + x); // Octant 5
+         do Screen.drawLine(centerX - y, centerY + x, centerX - y, centerY + x); // Octant 6
+         do Screen.drawLine(centerX + y, centerY - x, centerX + y, centerY - x); // Octant 7
+         do Screen.drawLine(centerX - y, centerY - x, centerX - y, centerY - x); // Octant 8
+
+         if (d < 0) {
+            let d = d + (2 * x) + 3;
+         } else {
+            let d = d + (2 * (x - y)) + 5;
+            let y = y - 1;
+         }
+         let x = x + 1;
+      }
+      return;
+   }
+   method void drawBlackPlayer(boolean draw) {
+      var int x, y, d;
+      do Screen.setColor(draw);
+      let x = 0;
+      let y = 3;
+      let d = 1 - 3;
+
+      while (~(x > y)) {
+         // Draw horizontal lines to fill the circle row by row
+         do Screen.drawLine(centerX - x, centerY + y, centerX + x, centerY + y); // Top octants
+         do Screen.drawLine(centerX - x, centerY - y, centerX + x, centerY - y); // Bottom octants
+         do Screen.drawLine(centerX - y, centerY + x, centerX + y, centerY + x); // Side octants
+         do Screen.drawLine(centerX - y, centerY - x, centerX + y, centerY - x); // Side octants (bottom)
+
+         if (d < 0) {
+            let d = d + (2 * x) + 3;
+         } else {
+            let d = d + (2 * (x - y)) + 5;
+            let y = y - 1;
+         }
+         let x = x + 1;
+      }
+      return;
+   }
+   method void setColor(int col)
+   {
+        let color = col;   
+        return this;
+   }
+   method void setCenterY(int i)
+   {
+        let centerY = i;
+        return this;
+   }
+   method void setCenterX(int i)
+   {
+        let centerX = i;
+        return this;
+   }
+   method void setColunm(Column col)
+   {
+         var int temp,colnumber;
+        if(col = null)
+        {
+            do drawChoise(false);
+            let centerX = 15;
+            let colunm = null;
+            let color = 1;
+            let centerY = 10;
+            return this;
+        }
+       else
+       {
+            let temp = col.getwidth();
+            do setCenterX(temp);
+            
+       }   
+        let colunm = col;
+        let colnumber = col.getColumnNumber();
+        if(colnumber<13)
+        {
+             do setCenterY(107);
+        }
+        else
+        {
+             do setCenterY(133);
+        }
+        return this;
+   }
+   method void drawChoise(boolean is)
+   {
+      if(color = 1)
+      {
+         do drawBlackPlayer(is);
+      }
+      else
+      {
+         do drawWhitePlayer(is);
+      }
+      return;
+   }
+   method Column getColumn()
+   {
+      return colunm;
+   }
+   method int getColumnNum()
+    {
+        var int temp;
+        let temp = colunm.getColumnNumber();
+        return temp;
+    }
+    method void SetColnumAndDraw(Column col)
+    {
+       do setColunm(col);
+        do drawChoise(true);
+        return this;
+
+    }
+    method int getColor()
+    {
+      return color;
+    }
+   method void removeChoise()
+   {
+      do drawChoise(false);
+      return;
+   }
+
+}

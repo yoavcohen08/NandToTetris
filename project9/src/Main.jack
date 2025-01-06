@@ -1,0 +1,17 @@
+class Main {
+    function void main() {
+        var Backgammon backgammon;
+        var int seed1,seed2,num1,num2;
+        var char key;
+        do  OpeningScreen.LetsBegin();
+        let backgammon = Backgammon.new();
+        let key = backgammon.play();
+        while(key = 114)
+        {
+            do backgammon.reset();
+            let key = backgammon.play();
+        }
+        do Sys.halt();
+        return;   
+}
+}

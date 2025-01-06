@@ -1,0 +1,55 @@
+/** Represents a linked list of integers. */
+class ListofPiece {
+    field Piece data;          // an int value,
+    field ListofPiece next;         // followed by a list of int values
+
+    /* Creates a List. */
+    constructor ListofPiece new(Piece car, ListofPiece cdr) {
+        let data = car;      // the identifiers car and cdr are used in 
+        let next = cdr;      // memory of the Lisp programming language
+        return this;
+    }
+    constructor ListofPiece emptylist() {
+        let data = null;
+        let next = null;
+        return this;
+    }
+
+
+    /** Accessors. */
+    method Piece getData() { return data; }
+    method Piece getNext() { return next; }
+    
+    method ListofPiece removeFirst() 
+    {
+        var ListofPiece rest;
+        let rest = next;
+        do Memory.deAlloc(this);
+        return rest;
+    }
+    
+    /** Disposes this List. */
+    // By recursively disposing its tail.
+    method void dispose() {
+        if (~(next = null)) {
+            do next.dispose();
+        }
+        // Calls an OS routine to free the memory of this object.
+        do Memory.deAlloc(this);
+        return;
+    }
+    /** Returns the length of the list. */
+    method int length() 
+    {
+        var int count;
+        var ListofPiece current;
+        let count = 0;
+        let current = this;
+        while (~(current = null)) {
+            let count = count + 1;
+            let current = current.getNext();
+        }
+        return count;
+    }
+    
+}

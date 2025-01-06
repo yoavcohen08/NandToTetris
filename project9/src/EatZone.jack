@@ -1,0 +1,92 @@
+class EatZone{
+    field int checkerCount;
+    field ListofPiece Eatlst;
+    field int width;
+    field int height;
+    field int color; // 0 for white, 1 for black
+    
+    constructor EatZone new(int wid, int hei, int zonecolor){
+        let width = wid;
+        let height = hei;
+        let checkerCount = 0;
+        let Eatlst = null;
+        let color = zonecolor;
+        return this;
+    }
+
+    method void addChecker(Piece piece){ 
+        var int flag, top;
+        if(checkerCount = 0)
+        {
+            let Eatlst = ListofPiece.new(piece, null);
+        }
+        else
+        {
+            let Eatlst = ListofPiece.new(piece, Eatlst);
+        }
+        if(color = 0) //white eat zone
+        {
+            if(checkerCount = 0) 
+            {
+                do piece.movePiece(231, 107); // white first location
+            }
+            if(checkerCount = 1)
+            {
+                do piece.movePiece(231, 115); // white second location
+            }
+            if(checkerCount > 1)
+            {
+                let top = (26 + (10 * (checkerCount -2)));
+                do piece.movePiece(35,top);
+            }
+        }
+        if(color = 1) //black eat zone
+        {   
+            if(checkerCount = 0)
+            {
+                do piece.movePiece(231, 133); // black first location
+            }
+            if(checkerCount = 1)
+            {
+                do piece.movePiece(231, 125); // black second location
+            }
+            if(checkerCount > 1)
+            {
+                let top = (26 + (10 * (checkerCount -2)));
+                do piece.movePiece(25, top);
+            }
+        }
+        let flag = checkerCount;
+        do setCounter(flag + 1); 
+        return this;
+    }
+    method Piece removeChecker()
+    {
+        var Piece piece;
+        if(checkerCount = 1) //last checker in eat zone
+        {
+            do setCounter(0);
+            let piece = Eatlst.getData();
+            //do Eatlst.dispose();
+            let Eatlst = null;
+        }
+        else
+        {
+            let piece = Eatlst.getData();
+            let Eatlst = Eatlst.removeFirst();
+            do setCounter(checkerCount - 1);
+        }
+        return piece;
+    }
+    method void setCounter(int count){
+        let checkerCount = count;
+        return this;
+    }
+    method int getCheckerCount(){
+        return checkerCount;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

@@ -1,0 +1,890 @@
+class Board {    
+    // Constants
+    field Array columns;
+    field EatZone WhiteEatZone;
+    field EatZone BlackEatZone;
+    field WinZone WhiteWinZone;
+    field WinZone BlackWinZone;
+
+
+    // Set up initial checkers on the board
+    constructor Board new() {
+        do DrawIntialBoard();
+        let columns = Array.new(25);
+        let WhiteEatZone = EatZone.new(231, 107, 0);
+        let BlackEatZone = EatZone.new(231, 133, 1);
+        let WhiteWinZone = WinZone.new(376, 230);
+        let BlackWinZone = WinZone.new(46, 230);
+        do initialcolumns();
+        do intialPieces();
+        return this;
+    }
+     // Set up initial columns on the board
+    method void initialcolumns() {
+        var Column newCol;
+        var int i;
+        let i = 1;
+        while(i < 25){
+            let newCol = Column.new(i);
+            let columns[i] = newCol;
+            let i = (i + 1);
+        }
+        return this;
+    }
+    // Set up initial checkers on the board
+    method void intialPieces(){
+        var Column flag;
+        var ListofPiece lst;
+        var Piece peice;
+        var int bool;
+         
+        let flag = columns[1];//Column 1
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        let flag = columns[6];//Column 6
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        let flag = columns[8];//Column 8
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        let flag = columns[12];//Column 12
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        let flag = columns[13];//Column 13
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        let flag = columns[17];//Column 17
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        let flag = columns[19];//Column 19
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        do flag.addChecker(Piece.new(0),null, null);
+        let flag = columns[24];//Column 24
+        do flag.addChecker(Piece.new(1),null, null);
+        do flag.addChecker(Piece.new(1),null, null);
+        return this;
+    }
+    method int BlackCheckWhoCanGoOut(int dice1) //return index of checker that can go out.
+    {
+        var int res, i;
+        var Column col;
+        var boolean flag;
+        if(dice1 = 0)
+        {
+            return 0;
+        }
+        let col = columns[dice1];
+        let i = 6;
+        let flag = true;
+        if(col.getCheckerCount() > 0)
+        {
+            if(col.getColor() = 1)
+            {
+                return (dice1);
+            }
+            
+        }
+       
+        
+            while(i > dice1)
+            {
+                let col = columns[i];
+                if(col.getCheckerCount() > 0  & (col.getColor() = 1))
+                {
+                    return 0;
+                }
+                let i = (i - 1);
+            }
+            let i = (dice1 - 1);
+            while(i > 0)
+            {
+                let col = columns[i];
+                if(col.getCheckerCount() > 0  & (col.getColor() = 1))
+                {
+                    return i;
+                }
+                let i = (i - 1);
+            }
+        return 0;
+    }
+   method int WhiteCheckWhoCanGoOut(int dice1)//return index of checker that can go out.
+    {
+        var int res, i;
+        var Column col;
+        var boolean flag;
+        if(dice1 = 0)
+        {
+            return 0;
+        }
+        let col = columns[25 - dice1];
+        let i = 19;
+        let flag = true;
+        if(col.getCheckerCount() > 0)
+        {
+            if(col.getColor() = 0)
+            {
+                return (25 - dice1);
+            }
+            
+        }
+            while(i < (25 - dice1))
+            {
+                let col = columns[i];
+                if(col.getCheckerCount() > 0 & (col.getColor() = 0))
+                {
+                    return 0;
+                }
+                let i = (i + 1);
+            }
+            let i = (25 - dice1) + 1;
+            while(i < 25)
+            {
+                let col = columns[i];
+                if(col.getCheckerCount() > 0 & (col.getColor() = 0))
+                {
+                    return i;
+                }
+                let i = (i + 1);
+            }
+        
+        return 0;
+    }
+     method int WhiteEaten(int dc1, int dc2)
+    {
+        var int checkI, checkJ, currColor, columnamount;
+        var Column columnTo;
+        if(dc1 > 0)
+        {
+            let columnTo = columns[dc1];
+            let currColor = columnTo.getColor();
+            let columnamount = columnTo.getCheckerCount();
+            if(currColor = 0)
+            {
+                let checkI = 1;
+            }
+            if(currColor = 1)
+            {
+                if(columnamount = 1)
+                {
+                    let checkI = 1;
+                }
+                else
+                {
+                    let checkI = 0;
+                }
+            }
+            if(currColor = -1)
+            {
+                let checkI = 1;
+            }
+        }
+        else
+        {
+            let checkI = 0;
+        }
+        if(dc2 > 0)
+        {
+            let columnTo = columns[dc2];
+            let currColor = columnTo.getColor();
+            let columnamount = columnTo.getCheckerCount();
+            if(currColor = 0)
+            {
+                let checkJ = 1;
+            }
+            if(currColor = 1)
+            {
+                if(columnamount = 1)
+                {
+                    let checkJ = 1;
+                }
+                else{
+                    let checkJ = 0;
+                }
+            }
+            if(currColor = -1)
+            {
+                let checkJ = 1;
+            }
+        }
+        else
+        {
+            let checkJ = 0;
+        }
+        if(checkI = 1)
+        {
+            if(checkJ = 1)
+            {
+                return 3; //Can move to i,j
+            }
+            return 1; //Can move to i
+        }
+        if(checkJ = 1)
+        {
+            return 2; //Can move to j
+        }
+        return 0; //Can't move
+    }
+    //Index where black player can enter if he is eaten.
+    method int BlackEaten(int dc1, int dc2)
+    {
+        var int checkI, checkJ, currColor, columnamount;
+        var Column columnTo;
+        let checkI = 0;
+        let checkJ = 0;
+        if(dc1 > 0)
+        {
+            let columnTo = columns[(25 - dc1)];
+            let currColor = columnTo.getColor();
+            let columnamount = columnTo.getCheckerCount();
+            if(currColor = 1)
+            {
+                let checkI = 1;
+            }
+            if(currColor = 0)
+            {
+                if(columnamount = 1)
+                {
+                    let checkI = 1;
+                }
+                else{
+                    let checkI = 0;
+                }
+            }
+            if(currColor = -1)
+            {
+                let checkI = 1;
+            }
+        }
+        else
+        {
+            let checkI = 0;
+        }
+        if(dc2 > 0)
+        {
+            let columnTo = columns[(25 - dc2)];
+            let currColor = columnTo.getColor();
+            let columnamount = columnTo.getCheckerCount();
+            if(currColor = 1)
+            {
+                let checkJ = 1;
+            }
+            if(currColor = 0)
+            {
+                if(columnamount = 1)
+                {
+                    let checkJ = 1;
+                }
+                else{
+                    let checkJ = 0;
+                }
+            }
+            if(currColor = -1)
+            {
+                let checkJ = 1;
+            }
+        }
+        else
+        {
+            let checkJ = 0;
+        }
+        if(checkI = 1)
+        {
+            if(checkJ = 1)
+            {
+                return 3; //Can move to i,j
+            }
+            return 1; //Can move to i
+        }
+        if(checkJ = 1)
+        {
+            return 2; //Can move to j
+        }
+        return 0; //Can't move
+    }
+    //After decided where to enter the eaten, call this method
+    method void removeEatenToBoard(int zonecolor, int goto)
+    {
+        var Piece piece;
+        var Column gotocolumn;
+        var int gotocolor;
+        if(zonecolor = 0)
+        {
+            let piece = WhiteEatZone.removeChecker();
+        }
+        else
+        {
+            let piece = BlackEatZone.removeChecker();
+        }
+
+        let gotocolumn = columns[goto];
+        let gotocolor = gotocolumn.getColor(); // goto columns color 
+        if(gotocolor = zonecolor) //Same color
+        {
+            do gotocolumn.addChecker(piece, WhiteWinZone, BlackWinZone);
+            return this;
+        }
+        if(gotocolor = -1) //Empty column
+        {
+            do gotocolumn.addChecker(piece, WhiteWinZone, BlackWinZone);
+            return this;
+        }
+        do gotocolumn.removeCheckerSpecial(WhiteEatZone, BlackEatZone);
+        do gotocolumn.addChecker(piece, WhiteWinZone, BlackWinZone);
+        return this;
+    }
+    //Where player can move
+    method int OptionsToMove(int index, int dc1, int dc2)
+    {
+        var int checkI, checkJ, checkIJ, sum;
+        var Column columnfrom;
+        let columnfrom = columns[index]; //Where i am moving from
+         let checkI =0;
+        let checkJ =0;
+        if(dc1>0)
+        {
+            let checkI = checkjump(columnfrom, dc1); //If i can move to dice 1
+        }
+       
+       if(dc2>0)
+       {
+            let checkJ = checkjump(columnfrom, dc2); //If i can move to dice 2
+       }  
+        let sum = dc1 + dc2;
+        let checkIJ = checkjump(columnfrom, sum); //If i can move to dice 1 + dice 2
+        
+        if(checkI = 1)
+        {
+            if(checkJ = 1)
+            {
+                if(checkIJ = 1)
+                {
+                    return 1; //Can move to i,j and i+j
+                }
+                return 2; //Can move to i and j
+            }
+            return 3; //Can move to i
+        }
+        if(checkJ = 1)
+        {
+            if(checkIJ = 1)
+            {
+                return 6; //Can move to j and i+j
+            }
+            return 4; //Can move to j
+        }
+        if(checkI = 1)
+        {
+            if(checkIJ = 1)
+            {
+                return 5; //Can move to i and i+j
+            }
+        }
+        return 0; //Can't move
+    }
+
+    //Checks if player can Jump to this column
+    method int checkjump(Column colstart, int locationindex) // true = 1, false = 0
+    {
+        var int currcol, location, i, jumpcolor, jumpcounter;
+        var Column coljump;
+        let i = colstart.getColumnNumber(); //Current column
+        let currcol = colstart.getColor(); //Current column color 
+        if(currcol = 0) //White player
+        {
+            let location = locationindex + i; //location of the jump
+            if(location > 24) //If the location is out of bounds
+            {
+                return 0; // cant move
+            }
+            let coljump = columns[location];
+            let jumpcolor = coljump.getColor();
+            if(jumpcolor = 0) //dest column is also white
+            {
+                return 1; //Can move
+            }
+            if(jumpcolor = 1) //dest column is black
+            {
+                let jumpcounter = coljump.getCheckerCount();
+                if(jumpcounter = 1) //If there is only one black checker
+                {
+                    return 1; //Can move
+                }
+                return 0; //cant move
+            }
+            if(jumpcolor = -1) //dest column is empty
+            {
+                return 1; //Can move
+            }
+        }
+        if(currcol =1) //Black player
+        {
+            let location = i - locationindex; //location of the jump
+            if(location < 1) //If the location is out of bounds
+            {
+                return 0; // cant move
+            }
+            let coljump = columns[location];
+            let jumpcolor = coljump.getColor();
+            if(jumpcolor = 1) //dest column is also black
+            {
+                return 1; //Can move
+            }
+            if(jumpcolor = 0) //dest column is white
+            {
+                let jumpcounter = coljump.getCheckerCount();
+                if(jumpcounter = 1) //If there is only one white checker
+                {
+                    return 1; //Can move
+                }
+                return 0; //cant move
+            }
+            if(jumpcolor = -1) //dest column is empty
+            {
+                return 1; //Can move
+            }
+        }
+        return -2;
+    }
+
+    method boolean CheckIfWhiteCanRemove() //Checks if all the white checkers are in columns 19-24, 1= true, 0 = false.
+    {
+        var int i, currcolor, eaten;
+        var Column column;
+        var boolean flag;
+        let flag = true; //true
+        let i = 1;
+        while(i < 19)
+        {
+            let column = columns[i];
+            let currcolor = column.getColor();
+            if(currcolor = 0)//Column has white players.
+            { 
+                let flag = false; //false
+            }
+            let i = (i + 1);
+        }
+        let eaten = WhiteEatZone.getCheckerCount();
+        if(eaten > 0)
+        {
+            let flag = false;
+        }
+        return flag;
+    }
+    method boolean CheckIfBlackCanRemove() //Checks if all the black checkers are in columns 1-6
+    {
+        var int i, currcolor, eaten;
+        var Column column;
+        var boolean flag;
+        let flag = true; //true
+        let i = 24;
+        while(i > 6)
+        {
+            let column = columns[i];
+            let currcolor = column.getColor();
+            if(currcolor = 1)//Column has black players.
+            { 
+                let flag = false; //false    
+            }
+            let i = (i - 1);
+        }
+        let eaten = BlackEatZone.getCheckerCount();
+        if(eaten > 0)
+        {
+            let flag = false;
+        }
+        return flag;
+
+    }
+    method boolean CheckIfCanRemove(int turn)
+    {
+        if(turn = 1)
+        {
+            return CheckIfBlackCanRemove();    
+        }
+        else
+        {
+            return CheckIfWhiteCanRemove();
+        }
+    }
+    method Array WhichCanRemove(int turn,int dice1)
+    {
+         if(turn = 1)
+        {
+            return BlackCheckWhoCanGoOut(dice1);    
+        }
+        else
+        {
+            return WhiteCheckWhoCanGoOut(dice1);
+        }
+    }
+    method void move(int from, int to){ //Regular move on board, from index to index and handles cases.
+        var Column columnfrom, columnto;
+        let columnfrom = columns[from];
+        let columnto = columns[to];
+        do columnfrom.moveChecker(columnto, WhiteEatZone, BlackEatZone);
+        return this;
+    }
+    method void winmove(int from){ //Win moves, from index to Winzone, only if all checkers are in home base.
+        var Column columnfrom;
+        let columnfrom = columns[from];
+        do columnfrom.removeChecker(WhiteWinZone, BlackWinZone);
+        return this;
+    }
+    method Column getAllOptionFirst(int turn_color,int firstcube ,int secondcube)//get all option, and return the first possible colunm the player can use
+    {
+        var int i,temp_color,jumpable,id;
+        var Column temp_col,first;
+        var boolean isfirst;
+        let isfirst=true;
+        let first = null;
+        let i=1;
+        while(i<25)//run all over all colnums
+        {
+            let jumpable=0;
+            let temp_col = columns[i];
+            let temp_color = temp_col.getColor();
+            if(temp_color = turn_color)
+            {
+                let id = temp_col.getColumnNumber();
+                let jumpable = OptionsToMove(id, firstcube, secondcube);
+                if (jumpable>0)//if I can move there
+                {
+                    if(isfirst)//if it is the first collunm
+                    {
+                        let first = temp_col;
+                        do first.setlight(true);
+                        let isfirst = false;
+                    }
+                    else
+                    {
+                      do temp_col.setlight(true);//set the rectangle on
+                      do temp_col.drawIfoption(true);//draw it
+                    }
+                }
+                else //I cant jump
+                {
+                    do temp_col.setlight(false);
+                }
+            }
+            else//this is not my color
+            {
+                do temp_col.setlight(false);
+            }
+            let i = i+1;
+        }
+        return first;
+    }
+    method boolean checkIfWhiteWin()//checks if white won, 1= win, 0 = not yet
+    {
+        var boolean amount;
+        let amount = WhiteWinZone.getCheckerCount();
+        if(amount = 15)
+        {
+            return true; //won the game
+        }
+        return false; //not yet
+    }
+    method boolean checkIfBlackWin()//checks if black won, 1= win, 0 = not yet
+    {
+        var boolean amount;
+        let amount = BlackWinZone.getCheckerCount();
+        if(amount = 15)
+        {
+            return true; //won the game
+        }
+        return false; //not yet
+    }
+    //turn off all rectanbgle except from column
+    method void turnOffAll(int col)
+    {
+        var int i;
+        var Column temp;
+        let i = 1;
+        while(i<25)
+        {
+            if(~(i=col))
+            {
+                let temp = columns[i];
+                do temp.drawIfoption(false);  
+            }
+            let i = i+1;        
+        }
+        return;
+
+    }
+    //draaw rectangle of column on index
+    method void turnOn(int ind)
+    {
+        var Column temp;
+        let temp = columns[ind];
+        do temp.drawIfoption(true);
+        return;
+    }
+    method void turnoffAllChoise() //run all over all the colunm and set the choise that rpreesnt where I can jump of.
+    {
+        var int i;
+        var Column temp;
+        let i = 1;
+        while(i<25)
+        {
+            let temp = columns[i];
+            do temp.setChoise_above(false);
+            let i = i+1;
+        }
+        return this;
+    }
+    method boolean HasMoveLeft()
+    {
+        var int i;
+        var Column temp;
+        var boolean ismove;
+        let ismove = false;
+        let i = 1;
+        while(i<25)
+        {
+            let temp = columns[i];
+            if(temp.getlight())
+            {
+                let ismove = true;
+            }
+            let i = i+1;
+        }
+        return ismove;
+    }
+    method void turnOnChoise(int col) //turn it on in spesific colnumber
+    {
+        var Column temp;
+        let temp = columns[col];
+        do temp.setChoise_above(true);
+        return;
+    }
+    method boolean isEeaten(int turn)//get turn and return true if there is someting eaten
+    {
+        if(turn = 1)
+        {
+            if(BlackEatZone.getCheckerCount()>0)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if(WhiteEatZone.getCheckerCount()>0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    method void DrawIntialBoard(){
+        do Screen.drawLine(40, 20, 420, 20);   // Top line 1
+        do Screen.drawLine(40, 21, 420, 21);   // Top line 2
+        do Screen.drawLine(40, 22, 420, 22);   // Top line 3
+
+        // Bottom lines (remains the same, starting at y = 210)
+        do Screen.drawLine(40, 210, 420, 210); // Bottom line 1
+        do Screen.drawLine(40, 209, 420, 209); // Bottom line 2
+        do Screen.drawLine(40, 208, 420, 208); // Bottom line 3
+
+        // Left vertical lines (adjusted to split into 3 taller sections, moved 10 units up)
+        do Screen.drawLine(40, 20, 40, 110);   // Left line 1 (start to 1st 1/3)
+        do Screen.drawLine(41, 20, 41, 110);   // Left line 2 (start to 1st 1/3)
+        do Screen.drawLine(42, 20, 42, 110);   // Left line 3 (start to 1st 1/3)
+
+        do Screen.drawLine(40, 110, 40, 160);  // Left line 2 (1st to 2nd part)
+        do Screen.drawLine(41, 110, 41, 160);  // Left line 2 (1st to 2nd part)
+        do Screen.drawLine(42, 110, 42, 160);  // Left line 2 (1st to 2nd part)
+
+        do Screen.drawLine(40, 160, 40, 210);  // Left line 3 (2nd to 3rd part)
+        do Screen.drawLine(41, 160, 41, 210);  // Left line 3 (2nd to 3rd part)
+        do Screen.drawLine(42, 160, 42, 210);  // Left line 3 (2nd to 3rd part)
+
+        // Right vertical lines (adjusted to split into 3 taller sections, moved 10 units up)
+        do Screen.drawLine(420, 20, 420, 110); // Right line 1 (start to 1st 1/3)
+        do Screen.drawLine(419, 20, 419, 110); // Right line 2 (start to 1st 1/3)
+        do Screen.drawLine(418, 20, 418, 110); // Right line 3 (start to 1st 1/3)
+
+        do Screen.drawLine(420, 110, 420, 160); // Right line 2 (1st to 2nd part)
+        do Screen.drawLine(419, 110, 419, 160); // Right line 2 (1st to 2nd part)
+        do Screen.drawLine(418, 110, 418, 160); // Right line 2 (1st to 2nd part)
+
+        do Screen.drawLine(420, 160, 420, 210); // Right line 3 (2nd to 3rd part)
+        do Screen.drawLine(419, 160, 419, 210); // Right line 3 (2nd to 3rd part)
+        do Screen.drawLine(418, 160, 418, 210); // Right line 3 (2nd to 3rd part)
+
+        // Border vertical lines (adjusted to fit into the taller 3 parts)
+        do Screen.drawLine(240, 20, 240, 210);  // First vertical line from top (1)
+        do Screen.drawLine(241, 20, 241, 210);  // First vertical line from top (2)
+        do Screen.drawLine(242, 20, 242, 210);  // First vertical line from top (3)
+
+        do Screen.drawLine(220, 20, 220, 210);  // Second vertical line from top (1)
+        do Screen.drawLine(221, 20, 221, 210);  // Second vertical line from top (2)
+        do Screen.drawLine(222, 20, 222, 210);  // Second vertical line from top (3)
+        //fill
+        do Screen.drawRectangle(220,20,240,102);
+        do Screen.drawRectangle(220,138,240,210);
+
+        //manue
+         do Screen.drawLine(426, 0, 426, 256);
+         do Screen.drawLine(427, 0, 427, 256);
+         do Screen.drawLine(428, 0, 428, 256);
+         //keys
+         do Output.moveCursor(14,54);
+         do Output.printString("Keys:");
+         do Output.moveCursor(15,54);
+         do Output.printString("enter-pick");
+         do Output.moveCursor(16,54);
+         do Output.printString("esc-cancel");
+         do Output.moveCursor(17,54);
+         do Output.printString("<,>-move");
+         do Output.moveCursor(18,54);
+         do Output.printString("d-roll");
+         do Output.moveCursor(19,54);
+         do Output.printString("w-take");
+         do Output.moveCursor(20,54);
+         do Output.printString("out");
+
+        do Screen.drawLine(40, 225, 90, 225);  // First part of the top line
+        do Screen.drawLine(40, 226, 90, 226);  // Second part of the top line
+
+        // Right line of the rectangle (two lines)
+        do Screen.drawLine(90, 225, 90, 255);  // First part of the right line
+        do Screen.drawLine(91, 225, 91, 255);  // Second part of the right line
+
+        // Bottom line of the rectangle (two lines)
+        do Screen.drawLine(90, 255, 40, 255);  // First part of the bottom line
+        do Screen.drawLine(90, 256, 40, 256);  // Second part of the bottom line
+
+        // Left line of the rectangle (two lines)
+        do Screen.drawLine(40, 255, 40, 225);  // First part of the left line
+        do Screen.drawLine(41, 255, 41, 225);  // Second part of the left line
+
+        //win zone 2 - moved down by 5 units
+        // Top line of the rectangle (two lines)
+        do Screen.drawLine(370, 225, 420, 225);  // First part of the top line
+        do Screen.drawLine(370, 226, 420, 226);  // Second part of the top line
+
+        // Right line of the rectangle (two lines)
+        do Screen.drawLine(420, 225, 420, 255);  // First part of the right line
+        do Screen.drawLine(421, 225, 421, 255);  // Second part of the right line
+
+        // Bottom line of the rectangle (two lines)
+        do Screen.drawLine(420, 255, 370, 255);  // First part of the bottom line
+        do Screen.drawLine(420, 256, 370, 256);  // Second part of the bottom line
+
+        // Left line of the rectangle (two lines)
+        do Screen.drawLine(370, 255, 370, 225);  // First part of the left line
+        do Screen.drawLine(371, 255, 371, 225);
+
+
+        // First column
+        do Screen.drawLine(69, 20, 69, 102);   // First column (1st part)
+        do Screen.drawLine(70, 20, 70, 102);   // First column (1st part)
+        do Screen.drawLine(69, 138, 69, 210);  // First column (2nd part)
+        do Screen.drawLine(70, 138, 70, 210);  // First column (2nd part)
+
+        // Second column
+        do Screen.drawLine(99, 20, 99, 102);   // Second column (1st part)
+        do Screen.drawLine(100, 20, 100, 102); // Second column (1st part)
+        do Screen.drawLine(99, 138, 99, 210);  // Second column (2nd part)
+        do Screen.drawLine(100, 138, 100, 210);// Second column (2nd part)
+
+        // Third column
+        do Screen.drawLine(129, 20, 129, 102); // Third column (1st part)
+        do Screen.drawLine(130, 20, 130, 102); // Third column (1st part)
+        do Screen.drawLine(129, 138, 129, 210);// Third column (2nd part)
+        do Screen.drawLine(130, 138, 130, 210);// Third column (2nd part)
+
+        // Fourth column
+        do Screen.drawLine(159, 20, 159, 102); // Fourth column (1st part)
+        do Screen.drawLine(160, 20, 160, 102); // Fourth column (1st part)
+        do Screen.drawLine(159, 138, 159, 210);// Fourth column (2nd part)
+        do Screen.drawLine(160, 138, 160, 210);// Fourth column (2nd part)
+
+        // Fifth column
+        do Screen.drawLine(189, 20, 189, 102); // Fifth column (1st part)
+        do Screen.drawLine(190, 20, 190, 102); // Fifth column (1st part)
+        do Screen.drawLine(189, 138, 189, 210);// Fifth column (2nd part)
+        do Screen.drawLine(190, 138, 190, 210);// Fifth column (2nd part)
+        // Sixth column (starts from x=269)
+        do Screen.drawLine(269, 20, 269, 102); // Sixth column (1st part)
+        do Screen.drawLine(270, 20, 270, 102); // Sixth column (1st part)
+        do Screen.drawLine(269, 138, 269, 210);// Sixth column (2nd part)
+        do Screen.drawLine(270, 138, 270, 210);// Sixth column (2nd part)
+
+        // Seventh column
+        do Screen.drawLine(299, 20, 299, 102); // Seventh column (1st part)
+        do Screen.drawLine(300, 20, 300, 102); // Seventh column (1st part)
+        do Screen.drawLine(299, 138, 299, 210);// Seventh column (2nd part)
+        do Screen.drawLine(300, 138, 300, 210);// Seventh column (2nd part)
+
+        // Eighth column
+        do Screen.drawLine(329, 20, 329, 102); // Eighth column (1st part)
+        do Screen.drawLine(330, 20, 330, 102); // Eighth column (1st part)
+        do Screen.drawLine(329, 138, 329, 210);// Eighth column (2nd part)
+        do Screen.drawLine(330, 138, 330, 210);// Eighth column (2nd part)
+
+        // Ninth column
+        do Screen.drawLine(359, 20, 359, 102); // Ninth column (1st part)
+        do Screen.drawLine(360, 20, 360, 102); // Ninth column (1st part)
+        do Screen.drawLine(359, 138, 359, 210);// Ninth column (2nd part)
+        do Screen.drawLine(360, 138, 360, 210);// Ninth column (2nd part)
+
+        // Tenth column
+        do Screen.drawLine(389, 20, 389, 102); // Tenth column (1st part)
+        do Screen.drawLine(390, 20, 390, 102); // Tenth column (1st part)
+        do Screen.drawLine(389, 138, 389, 210);// Tenth column (2nd part)
+        do Screen.drawLine(390, 138, 390, 210);// Tenth column (2nd part)
+
+
+        //cube
+        // Cube 1 (first cube) - moved down by 5 units
+        do Screen.drawLine(180, 225, 210, 225);  // Bottom line of the front face (right side)
+        do Screen.drawLine(210, 225, 210, 245);  // Right side of the front face
+        do Screen.drawLine(210, 245, 180, 245);  // Top line of the front face
+        do Screen.drawLine(180, 245, 180, 225);  // Left side of the front face (removed)
+
+        // Connect to the 3D perspective
+        do Screen.drawLine(180, 225, 190, 215);  // Connect to the 3D perspective (back left)
+        do Screen.drawLine(210, 225, 220, 215);  // Connect to the 3D perspective (back right)
+        do Screen.drawLine(210, 245, 220, 235);  // Connect to the 3D perspective (back right top)
+        do Screen.drawLine(220, 235, 220, 215);  // Connect to 3D right top to right wig
+        do Screen.drawLine(190, 215, 220, 215);  // Connect to 3D left to right wig
+
+        do Screen.drawLine(227, 225, 257, 225);  // Bottom line of the front face (right side)
+        do Screen.drawLine(257, 225, 257, 245);  // Right side of the front face
+        do Screen.drawLine(257, 245, 227, 245);  // Top line of the front face
+        do Screen.drawLine(227, 245, 227, 225);  // Left side of the front face (removed)
+
+        // Connect to the 3D perspective
+        do Screen.drawLine(227, 225, 237, 215);  // Connect to the 3D perspective (back left)
+        do Screen.drawLine(257, 225, 267, 215);  // Connect to the 3D perspective (back right)
+        do Screen.drawLine(257, 245, 267, 235);  // Connect to the 3D perspective (back right top)
+        do Screen.drawLine(267, 235, 267, 215);  // Connect to 3D right top to right wig
+        do Screen.drawLine(237, 215, 267, 215);  // Connect to 3D left to right wig
+        return;
+    }
+    method Column getColumn(int index){
+        var Column c1;
+        let c1 = columns[index];
+        return c1;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+}

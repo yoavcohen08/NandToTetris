@@ -1,0 +1,125 @@
+class WinZone{
+    field int checkerCount;
+    field int width;
+    field int height;
+
+    constructor WinZone new(int wid, int hig){
+        let width = wid;
+        let height = hig;
+        let checkerCount = 0;
+        return this;
+    }
+    
+    method void addChecker(Piece piece){
+        var int w, d;
+        let w = width;
+        let d = height;
+        if(piece.getColor() = 0)
+        {
+            if(checkerCount = 0){
+                do piece.movePiece(w, d);
+            }
+            if(checkerCount = 1){
+                do piece.movePiece(386, 230);
+            }
+            if(checkerCount = 2){
+                do piece.movePiece(396, 230);
+            }
+            if(checkerCount = 3){
+                do piece.movePiece(406, 230);
+            }
+            if(checkerCount = 4){
+                do piece.movePiece(416, 230);
+            }
+            if(checkerCount = 5){
+                do piece.movePiece(376, 240);
+            }
+            if(checkerCount = 6){
+                do piece.movePiece(386, 240);
+            }
+            if(checkerCount = 7){
+                do piece.movePiece(396, 240);
+            }
+            if(checkerCount = 8){
+                do piece.movePiece(406, 240);
+            }
+            if(checkerCount = 9){
+                do piece.movePiece(416, 240);
+            }
+            if(checkerCount = 10){
+                do piece.movePiece(376, 250);
+            }
+            if(checkerCount = 11){
+                do piece.movePiece(386, 250);
+            }
+            if(checkerCount = 12){
+                do piece.movePiece(396, 250);
+            }
+            if(checkerCount = 13){
+                do piece.movePiece(406, 250);
+            }
+            if(checkerCount = 14){
+                do piece.movePiece(416, 250);
+            }
+        }
+        else
+        {
+            if(checkerCount = 0){
+                do piece.movePiece(w, d);
+            }
+            if(checkerCount = 1){
+                do piece.movePiece(56, 230);
+            }
+            if(checkerCount = 2){
+                do piece.movePiece(66, 230);
+            }
+            if(checkerCount = 3){
+                do piece.movePiece(76, 230);
+            }
+            if(checkerCount = 4){
+                do piece.movePiece(86, 230);
+            }
+            if(checkerCount = 5){
+                do piece.movePiece(46, 240);
+            }
+            if(checkerCount = 6){
+                do piece.movePiece(56, 240);
+            }
+            if(checkerCount = 7){
+                do piece.movePiece(66, 240);
+            }
+            if(checkerCount = 8){
+                do piece.movePiece(76, 240);
+            }
+            if(checkerCount = 9){
+                do piece.movePiece(86, 240);
+            }
+            if(checkerCount = 10){
+                do piece.movePiece(46, 250);
+            }
+            if(checkerCount = 11){
+                do piece.movePiece(56, 250);
+            }
+            if(checkerCount = 12){
+                do piece.movePiece(66, 250);
+            }
+            if(checkerCount = 13){
+                do piece.movePiece(76, 250);
+            }
+            if(checkerCount = 14){
+                do piece.movePiece(86, 250);
+            }
+        }
+        let checkerCount = checkerCount + 1;
+        return this;
+    }
+    method int getCheckerCount(){
+        return checkerCount;
+    }
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+
+
+}
